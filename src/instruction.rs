@@ -30,6 +30,10 @@ impl From<u8> for Opcode{
         match v {
             0 => Opcode::HLT,
             1 => Opcode::LOAD,
+            2 => Opcode::ADD,
+            3 => Opcode::SUB,
+            4 => Opcode::MUL,
+            5 => Opcode::DIV,
             _ => Opcode::IGL
         }
     }
@@ -54,4 +58,5 @@ mod tests {
       let instruction = Instruction::new(Opcode::HLT);
       assert_eq!(instruction.opcode, Opcode::HLT);
     }
-}
+
+   }

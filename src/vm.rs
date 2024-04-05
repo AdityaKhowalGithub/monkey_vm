@@ -1,21 +1,18 @@
 use super::instruction::Opcode;
-pub struct VM{
+pub struct VM {
     registers: [i32; 32],
     pc: usize,
-    program: Vec<u8>,//vector of bytes
+    program: Vec<u8>, //vector of bytes
     remainder: u32,
-
-
 }
 
-
-impl VM{
-    pub fn new() -> VM{
-        VM{
-            registers: [0;32],
+impl VM {
+    pub fn new() -> VM {
+        VM {
+            registers: [0; 32],
             program: vec![],
             pc: 0,
-            remainder: 0
+            remainder: 0,
         }
     }
     fn decode_opcode(&mut self) -> Opcode {
@@ -35,90 +32,74 @@ impl VM{
         result
     }
 
-    fn execute_instruction(&mut self)-> bool{
-            if self.pc >= self.program.len(){
-               return false;
+    fn execute_instruction(&mut self) -> bool {
+        if self.pc >= self.program.len() {
+            return false;
+        }
+        match self.decode_opcode() {
+            Opcode::HLT => {
+                println!("HLT Encountered");
+                return false;
             }
-            match self.decode_opcode(){
-                Opcode::HLT => {
-                    println!("HLT Encountered");
-                    return false;
-                },
-                Opcode::LOAD => {
-                    let register = self.next8bits() as usize;
-                    let number = self.next16bits() as u16;
-                    self.registers[register] = number as i32;
-                    // continue;
-
-                },
-                Opcode::ADD => {
-                    let register1 = self.registers[self.next8bits() as usize];
-                    let register2 = self.registers[self.next8bits() as usize];
-                    self.registers[self.next8bits() as usize] = register1 + register2;
-
-                },
-                Opcode::SUB => {
-                    let register1 = self.registers[self.next8bits() as usize];
-                    let register2 = self.registers[self.next8bits() as usize];
-                    self.registers[self.next8bits() as usize] = register1 - register2;
-
-                },
-                Opcode::MUL => {
-                    let register1 = self.registers[self.next8bits() as usize];
-                    let register2 = self.registers[self.next8bits() as usize];
-                    self.registers[self.next8bits() as usize] = register1 * register2;
-
-                },
-                Opcode::DIV => {
-                    let register1 = self.registers[self.next8bits() as usize];
-                    let register2 = self.registers[self.next8bits() as usize];
-                    self.registers[self.next8bits() as usize] = register1 / register2;
-                    self.remainder = (register1 % register2) as u32;
-                },
-
-                _ => {
-                    println!("unrecognized opcode, terminating");
-                    
+            Opcode::LOAD => {
+                let register = self.next8bits() as usize;
+                let number = self.next16bits() as u16;
+                self.registers[register] = number as i32;
+                // continue;
+            }
+            Opcode::ADD => {
+                let register1 = self.next8bits() as usize;
+                let register2 = self.next8bits() as usize;
+                let result_register = self.next8bits() as usize;
+                self.registers[result_register] =
+                    self.registers[register1] + self.registers[register2];
+            }
+            Opcode::SUB => {
+                let register1 = self.next8bits() as usize;
+                let register2 = self.next8bits() as usize;
+                let result_register = self.next8bits() as usize;
+                self.registers[result_register] =
+                    self.registers[register1] - self.registers[register2];
+            }
+            Opcode::MUL => {
+                let register1 = self.next8bits() as usize;
+                let register2 = self.next8bits() as usize;
+                let result_register = self.next8bits() as usize;
+                self.registers[result_register] =
+                    self.registers[register1] * self.registers[register2];
+            }
+            Opcode::DIV => {
+                let register1 = self.next8bits() as usize;
+                let register2 = self.next8bits() as usize;
+                let result_register = self.next8bits() as usize;
+                if self.registers[register2] == 0 {
+                    println!("Error: Division by zero");
                     return false;
                 }
+                self.registers[result_register] =
+                    self.registers[register1] / self.registers[register2];
+                self.remainder = (self.registers[register1] % self.registers[register2]) as u32;
             }
-            true
 
+            _ => {
+                println!("unrecognized opcode, terminating");
+
+                return false;
+            }
+        }
+        true
     }
-    pub fn run_once(&mut self){
+    pub fn run_once(&mut self) {
         self.execute_instruction();
     }
 
-    pub fn run(&mut self){
+    pub fn run(&mut self) {
         let mut done = false;
-        while !done{
-           done = self.execute_instruction();
-            
+        while !done {
+            done = self.execute_instruction();
         }
-            // loop{
-            // if self.pc >= self.program.len(){
-                // break;
-            // }
-            // match self.decode_opcode(){
-                // Opcode::HLT => {
-                    // println!("HLT Encountered");
-                    // return;
-                // },
-                // Opcode::LOAD => {
-                    // let register = self.next8bits() as usize;
-                    // let number = self.next16bits() as u16;
-                    // self.registers[register] = number as i32;
-                    // continue;
-                // },
-                // _ => {
-                    // println!("unrecognized opcode, terminating");
-                    // return;
-                // }
-            // }
-        // }
     }
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -141,20 +122,69 @@ mod tests {
     }
 
     #[test]
-    fn test_opcode_igl(){
+    fn test_opcode_igl() {
         let mut test_vm = VM::new();
         let test_bytes = vec![0, 200, 0, 0];
         test_vm.program = test_bytes;
         test_vm.run_once();
         assert_eq!(test_vm.pc, 1);
     }
-    
+
     #[test]
-    fn test_opcode_load(){
+    fn test_opcode_load() {
         let mut test_vm = VM::new();
         let test_bytes = vec![1, 0, 1, 244];
         test_vm.program = test_bytes;
         test_vm.run_once();
         assert_eq!(test_vm.registers[0], 500);
+    }
+    #[test]
+    fn test_add_opcode() {
+        let mut test_vm = VM::new();
+        test_vm.registers[0] = 10;
+        test_vm.registers[1] = 20;
+        test_vm.program = vec![2, 0, 1, 2, 0];
+        test_vm.run_once();
+        assert_eq!(test_vm.registers[2], 30);
+    }
+
+    #[test]
+    fn test_sub_opcode() {
+        let mut test_vm = VM::new();
+        test_vm.registers[0] = 20;
+        test_vm.registers[1] = 10;
+        test_vm.program = vec![3, 0, 1, 2, 0];
+        test_vm.run_once();
+        assert_eq!(test_vm.registers[2], 10);
+    }
+
+    #[test]
+    fn test_mul_opcode() {
+        let mut test_vm = VM::new();
+        test_vm.registers[0] = 10;
+        test_vm.registers[1] = 20;
+        test_vm.program = vec![4, 0, 1, 2, 0];
+        test_vm.run_once();
+        assert_eq!(test_vm.registers[2], 200);
+    }
+
+    #[test]
+    fn test_div_opcode() {
+        let mut test_vm = VM::new();
+        test_vm.registers[0] = 20;
+        test_vm.registers[1] = 10;
+        test_vm.program = vec![5, 0, 1, 2, 0];
+        test_vm.run_once();
+        assert_eq!(test_vm.registers[2], 2);
+    }
+
+    #[test]
+    fn test_div_opcode_remainder() {
+        let mut test_vm = VM::new();
+        test_vm.registers[0] = 20;
+        test_vm.registers[1] = 3;
+        test_vm.program = vec![5, 0, 1, 2, 0];
+        test_vm.run_once();
+        assert_eq!(test_vm.remainder, 2);
     }
 }
