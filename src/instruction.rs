@@ -4,7 +4,12 @@
 #[derive(Debug, PartialEq)]
 pub enum Opcode {
     HLT, //halt
-    IGL //illegal
+    LOAD, //load into register
+    IGL, //illegal
+    ADD, //add
+    SUB, //subtract
+    MUL, //multiply
+    DIV, //divide
 }
 
 //an instruction itself is 32 bits
