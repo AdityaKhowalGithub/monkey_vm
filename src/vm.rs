@@ -152,7 +152,7 @@ mod tests {
     #[test]
     fn test_opcode_load(){
         let mut test_vm = VM::new();
-        let test_bytes = vec![0, 0, 1, 244];
+        let test_bytes = vec![1, 0, 1, 244];
         test_vm.program = test_bytes;
         test_vm.run_once();
         assert_eq!(test_vm.registers[0], 500);

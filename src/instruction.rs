@@ -29,6 +29,7 @@ impl From<u8> for Opcode{
     fn from(v: u8) -> Self {
         match v {
             0 => Opcode::HLT,
+            1 => Opcode::LOAD,
             _ => Opcode::IGL
         }
     }
