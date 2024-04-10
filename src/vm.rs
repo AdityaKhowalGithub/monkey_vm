@@ -80,6 +80,10 @@ impl VM {
                     self.registers[register1] / self.registers[register2];
                 self.remainder = (self.registers[register1] % self.registers[register2]) as u32;
             }
+            Opcode::JMP => {
+                let target = self.registers[self.next8bits() as usize];
+                self.pc = target as usize;
+            }
 
             _ => {
                 println!("unrecognized opcode, terminating");
@@ -106,6 +110,14 @@ mod tests {
 
     use super::*;
 
+    pub fn get_test_vm() -> VM {
+        let mut test_vm = VM::new();
+        test_vm.registers[0] = 5;
+        test_vm.registers[1] = 10;
+        // test_vm.float_registers[0] = 5.0;
+        // test_vm.float_registers[1] = 10.0;
+        test_vm
+    }
     #[test]
     fn test_create_vm() {
         let test_vm = VM::new();
@@ -186,5 +198,14 @@ mod tests {
         test_vm.program = vec![5, 0, 1, 2, 0];
         test_vm.run_once();
         assert_eq!(test_vm.remainder, 2);
+    }
+
+    #[test]
+    fn test_jmp_opcode() {
+        let mut test_vm = get_test_vm();
+        test_vm.registers[0] = 1;
+        test_vm.program = vec![6, 0, 0, 0];
+        test_vm.run_once();
+        assert_eq!(test_vm.pc, 1);
     }
 }

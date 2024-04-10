@@ -3,29 +3,28 @@
 // op code just represents different actions comp can do
 #[derive(Debug, PartialEq)]
 pub enum Opcode {
-    HLT, //halt
+    HLT,  //halt
     LOAD, //load into register
-    IGL, //illegal
-    ADD, //add
-    SUB, //subtract
-    MUL, //multiply
-    DIV, //divide
+    IGL,  //illegal
+    ADD,  //add
+    SUB,  //subtract
+    MUL,  //multiply
+    DIV,  //divide
+    JMP,  //jump
 }
 
 //an instruction itself is 32 bits
-pub struct Instruction{
-    opcode: Opcode
+pub struct Instruction {
+    opcode: Opcode,
 }
-impl Instruction{
-    pub fn new(opcode: Opcode) -> Instruction{
-        Instruction{
-            opcode: opcode
-        }
+impl Instruction {
+    pub fn new(opcode: Opcode) -> Instruction {
+        Instruction { opcode: opcode }
     }
 }
 
 //convert from a byte to an opcode
-impl From<u8> for Opcode{
+impl From<u8> for Opcode {
     fn from(v: u8) -> Self {
         match v {
             0 => Opcode::HLT,
@@ -34,14 +33,14 @@ impl From<u8> for Opcode{
             3 => Opcode::SUB,
             4 => Opcode::MUL,
             5 => Opcode::DIV,
-            _ => Opcode::IGL
+            6 => Opcode::JMP,
+            _ => Opcode::IGL,
         }
     }
 }
-//right now 0 halts and anything else gives illegal 
+//right now 0 halts and anything else gives illegal
 ////in decode opcode we increment PC by 1 because once we decode an opcode we have to move the
 ///counter to the next byte
-
 
 #[cfg(test)]
 mod tests {
@@ -55,8 +54,7 @@ mod tests {
 
     #[test]
     fn test_create_instruction() {
-      let instruction = Instruction::new(Opcode::HLT);
-      assert_eq!(instruction.opcode, Opcode::HLT);
+        let instruction = Instruction::new(Opcode::HLT);
+        assert_eq!(instruction.opcode, Opcode::HLT);
     }
-
-   }
+}

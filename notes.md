@@ -24,5 +24,21 @@ The program counter (pc) is a special register that keeps track of the current p
 
 ### Opcode:
 
-An opcode (short for "operation code") is a numeric code that represents a specific instruction or operation that the Virtual Machine can execute. In this code, the Opcode type is not defined, but it is mentioned that the `decode_opcode()` function returns an Opcode value. The Opcode type is likely defined elsewhere in the code (in the instruction module, as indicated by the `use super::instruction::Opcode;` line).
+An opcode (short for "operation code") is a numeric code that represents a specific instruction or operation that the Virtual Machine can execute. In this code, the Opcode type is not defined, but it is mentioned that the `decode_opcode()` function returns an Opcode value. The Opcode type is likely defined elsewhere in the code (in the instruction module, as indicated by the `use super::instruction::Opcode;` line)
 
+### Jumps:
+#### Absolute jump:
+- Jumps to memory adress, JMP 100 will jump to memory adress 100
+- limited to max number that can be represented by available bits in instruction
+- JMP 10000000000000000000000000000000 will not work because our 32 - 8 bit (for JMP opcode) gives us 24 bits to work with, so max number is 2^24 or 16777216
+
+#### Relative jump:
+- jumps to memory address relative to current memory address
+- JMP +5 will jump 5 memory addresses forward
+- JMP -5 will jump 5 memory addresses back
+- JMP back is useful for loops
+
+#### Jumps to labels:
+- Jump to a labeled or tagged bit, without having to know the memory address
+- Labels are like named bookmarks in your code, and the assembler or compiler will figure out the correct memory address for you.
+- This makes the code more readable and easier to maintain, as you don't have to worry about the exact memory addresses.
