@@ -222,10 +222,10 @@ mod tests {
     #[test]
     fn test_jmpf_opcode() {
         let mut test_vm = get_test_vm();
-        test_vm.registers[0] = 1;
-        test_vm.program = vec![7, 0, 0, 0];
+        test_vm.registers[0] = 2;
+        test_vm.program = vec![7, 0, 0, 0, 6, 0, 0, 0];
         test_vm.run_once();
-        assert_eq!(test_vm.pc, 1);
+        assert_eq!(test_vm.pc, 4);
     }
 
     #[test]
