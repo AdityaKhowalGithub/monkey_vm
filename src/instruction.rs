@@ -11,6 +11,8 @@ pub enum Opcode {
     MUL,  //multiply
     DIV,  //divide
     JMP,  //jump
+    JMPF,
+    JMPB,
 }
 
 //an instruction itself is 32 bits
@@ -34,6 +36,8 @@ impl From<u8> for Opcode {
             4 => Opcode::MUL,
             5 => Opcode::DIV,
             6 => Opcode::JMP,
+            7 => Opcode::JMPF,
+            8 => Opcode::JMPB,
             _ => Opcode::IGL,
         }
     }
