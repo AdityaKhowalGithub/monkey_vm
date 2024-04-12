@@ -6,6 +6,7 @@ pub struct VM {
     pc: usize,
     program: Vec<u8>, //vector of bytes
     remainder: u32,
+    equal_flag: bool, //flag to check if two values are equal
 }
 
 impl VM {
@@ -15,6 +16,7 @@ impl VM {
             program: vec![],
             pc: 0,
             remainder: 0,
+            equal_flag: false,
         }
     }
     fn decode_opcode(&mut self) -> Opcode {
@@ -93,6 +95,12 @@ impl VM {
             Opcode::JMPB => {
                 let value = self.registers[self.next8bits() as usize];
                 self.pc -= value as usize;
+            }
+            Opcode::EQ => {
+                let v1 = self.registers[self.next8bits() as usize];
+                let v2 = self.registers[self.next8bits() as usize];
+                self.equal_flag = v1 == v2;
+                self.next8bits();
             }
 
             _ => {
@@ -235,5 +243,18 @@ mod tests {
         test_vm.program = vec![8, 0, 0, 0];
         test_vm.run_once();
         assert_eq!(test_vm.pc, 1);
+    }
+
+    #[test]
+    fn test_eq_opcode() {
+        let mut test_vm = get_test_vm();
+        test_vm.registers[0] = 10;
+        test_vm.registers[1] = 10;
+        test_vm.program = vec![9, 0, 1, 0, 10, 0, 1, 0];
+        test_vm.run_once();
+        assert_eq!(test_vm.equal_flag, true);
+        test_vm.registers[1] = 20;
+        test_vm.run_once();
+        assert_eq!(test_vm.equal_flag, false);
     }
 }

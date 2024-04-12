@@ -13,6 +13,13 @@ pub enum Opcode {
     JMP,  //jump
     JMPF,
     JMPB,
+    EQ,  //EQUAL
+    NEQ, //NOT EQUAL
+    GT,  //GREATER THAN
+    LT,  //LESS THAN
+    GTE, //GREATER THAN OR EQUAL
+    LTE, //LESS THAN OR EQUAL
+    JEQ, //JUMP IF EQUAL
 }
 
 //an instruction itself is 32 bits
@@ -38,6 +45,13 @@ impl From<u8> for Opcode {
             6 => Opcode::JMP,
             7 => Opcode::JMPF,
             8 => Opcode::JMPB,
+            9 => Opcode::EQ,
+            10 => Opcode::NEQ,
+            11 => Opcode::GT,
+            12 => Opcode::LT,
+            13 => Opcode::GTE,
+            14 => Opcode::LTE,
+            15 => Opcode::JEQ,
             _ => Opcode::IGL,
         }
     }
