@@ -102,6 +102,36 @@ impl VM {
                 self.equal_flag = v1 == v2;
                 self.next8bits();
             }
+            Opcode::NEQ => {
+                let v1 = self.registers[self.next8bits() as usize];
+                let v2 = self.registers[self.next8bits() as usize];
+                self.equal_flag = v1 != v2;
+                self.next8bits();
+            }
+            Opcode::GT => {
+                let v1 = self.registers[self.next8bits() as usize];
+                let v2 = self.registers[self.next8bits() as usize];
+                self.equal_flag = v1 > v2;
+                self.next8bits();
+            }
+            Opcode::LT => {
+                let v1 = self.registers[self.next8bits() as usize];
+                let v2 = self.registers[self.next8bits() as usize];
+                self.equal_flag = v1 < v2;
+                self.next8bits();
+            }
+            Opcode::GTE => {
+                let v1 = self.registers[self.next8bits() as usize];
+                let v2 = self.registers[self.next8bits() as usize];
+                self.equal_flag = v1 >= v2;
+                self.next8bits();
+            }
+            Opcode::LTE => {
+                let v1 = self.registers[self.next8bits() as usize];
+                let v2 = self.registers[self.next8bits() as usize];
+                self.equal_flag = v1 <= v2;
+                self.next8bits();
+            }
 
             _ => {
                 println!("unrecognized opcode, terminating");
