@@ -280,10 +280,14 @@ mod tests {
         let mut test_vm = get_test_vm();
         test_vm.registers[0] = 10;
         test_vm.registers[1] = 10;
-        test_vm.program = vec![9, 0, 1, 0, 10, 0, 1, 0];
+        test_vm.program = vec![9, 0, 1, 0]; // EQ Opcode followed by its operands
         test_vm.run_once();
         assert_eq!(test_vm.equal_flag, true);
+
+        // Reset PC and change the value of register 1 for the next test
+        test_vm.pc = 0;
         test_vm.registers[1] = 20;
+        test_vm.program = vec![9, 0, 1, 0]; // Reset the program for the next EQ test
         test_vm.run_once();
         assert_eq!(test_vm.equal_flag, false);
     }
